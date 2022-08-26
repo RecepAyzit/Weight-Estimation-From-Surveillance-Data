@@ -165,6 +165,27 @@ def haversine(point1, point2):
 
     return 2 * earth_radius * np.arcsin(np.sqrt(d))
 
+def vincenty(point1, point2):
+    earth_radius = 6371008.8 # meters
+
+    # unpack latitude/longitude
+    lat1, lng1 = point1
+    lat2, lng2 = point2
+
+    # convert all latitudes/longitudes from decimal degrees to radians
+    lat1 = np.deg2rad(lat1)
+    lng1 = np.deg2rad(lng1)
+    lat2 = np.deg2rad(lat2)
+    lng2 = np.deg2rad(lng2)
+
+    # calculate haversine
+    lat = lat2 - lat1
+    lng = lng2 - lng1
+    d = (np.cos(lat2)*np.sin(lng))**2 + (np.cos(lat1)*np.sin(lat2)-np.sin(lat1)*np.cos(lat2)*np.cos(lng))**2
+    e = np.sin(lat1)*np.sin(lat2) + np.cos(lat1)*np.cos(lat2)*np.cos(lng)
+    
+    return earth_radius * np.arctan2(np.sqrt(d),e)
+
 def WeightFromSpeed(pAltFeet,pIsaDev, S , Clmax, Vapp):
     tempK = temperatureC(pAltFeet, pIsaDev) + 273
     p = isaPressure(tempK, pIsaDev)
@@ -180,3 +201,5 @@ def Tas2Ias(Tas,a0,rho,P0,Ki=0):
     
 def piecewise_linear(x, x0, y0, k1, k2):
     return np.piecewise(x, [x < x0], [lambda x:k1*x + y0-k1*x0, lambda x:k2*x + y0-k2*x0])
+
+
