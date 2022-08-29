@@ -7,6 +7,8 @@ import scipy.io as sio
 from math import sin, cos, atan2, sqrt, radians, asin, floor
 import math
 from torch import long
+from scipy.special import erfc
+
 
 constants = {}
 constants["kappa"] = 1.4
@@ -202,4 +204,13 @@ def Tas2Ias(Tas,a0,rho,P0,Ki=0):
 def piecewise_linear(x, x0, y0, k1, k2):
     return np.piecewise(x, [x < x0], [lambda x:k1*x + y0-k1*x0, lambda x:k2*x + y0-k2*x0])
 
+def chauvenet(array):
+    array = np.array(array)
+    mean = np.mean(array)
+    std = np.std(array)
+    n = len(array)
+    criterion = 0.2       # Chauvenet's criterion
+    d = abs(array-mean)/std       # Distance of a value to mean in stdv's
+    prob = erfc(d)
+    return prob, criterion
 
